@@ -127,7 +127,7 @@ if __name__ == "__main__":
         REGISTRY.unregister(coll)
     try:
         prometheus_client.start_http_server(args.port)
-    except Exception:
+    except Exception as e:
         e.add_note("\nError starting HTTP server.")
         raise
     else:
