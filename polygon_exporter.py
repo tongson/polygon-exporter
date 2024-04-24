@@ -100,8 +100,6 @@ def get_heimdall_height(endpoint: str) -> tuple[float, float]:
     else:
         if resp.status_code == 200:
             data = resp.json()
-            ht = data["height"]
-            cp = data["result"]["id"]
             return float(data["height"]), float(data["result"]["id"])
         else:
             return float(0), float(0)
