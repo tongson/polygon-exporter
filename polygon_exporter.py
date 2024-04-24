@@ -79,7 +79,7 @@ def get_bor_height(endpoint: str) -> float:
                 "id": 1,
             },
         )
-    except Exception as e:
+    except Exception:
         return float(0)
     else:
         if resp.status_code == 200:
@@ -95,7 +95,7 @@ def get_heimdall_height(endpoint: str) -> tuple[float, float]:
     session = new_https()
     try:
         resp = session.get(f"{endpoint}/checkpoints/latest")
-    except Exception as e:
+    except Exception:
         return float(0), float(0)
     else:
         if resp.status_code == 200:
@@ -113,7 +113,7 @@ def get_local_height(endpoint: str, validator: str) -> float:
         resp = session.get(
             f"{endpoint}/api/v2/validators/{validator}/checkpoints-signed?limit=1&offset=0"
         )
-    except Exception as e:
+    except Exception:
         return float(0)
     else:
         if resp.status_code == 200:
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         REGISTRY.unregister(coll)
     try:
         prometheus_client.start_http_server(args.port)
-    except Exception as e:
+    except Exception:
         e.add_note("\nError starting HTTP server.")
         raise
     else:
