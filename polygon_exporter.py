@@ -8,7 +8,8 @@ from urllib3.util import Retry
 import prometheus_client
 from prometheus_client import REGISTRY
 
-def new_https() -> requests.Session: 
+
+def new_https() -> requests.Session:
     retry_strategy = Retry(
         total=4,
         status_forcelist=[104, 408, 425, 429, 500, 502, 503, 504],
@@ -20,9 +21,7 @@ def new_https() -> requests.Session:
 
 
 def read_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Polygon Exporter."
-    )
+    parser = argparse.ArgumentParser(description="Polygon Exporter.")
     parser.add_argument(
         "--port",
         metavar="PORT",
@@ -71,7 +70,15 @@ def read_args() -> argparse.Namespace:
 def get_bor_height(endpoint: str) -> float:
     session = new_https()
     try:
-        resp = session.post(endpoint, json={"jsonrpc": "2.0", "method": "eth_getBlockByNumber", "params": ["latest", True], "id": 1})
+        resp = session.post(
+            endpoint,
+            json={
+                "jsonrpc": "2.0",
+                "method": "eth_getBlockByNumber",
+                "params": ["latest", True],
+                "id": 1,
+            },
+        )
     except Exception as e:
         return float(0)
     else:
@@ -99,10 +106,13 @@ def get_heimdall_height(endpoint: str) -> tuple[float, float]:
         else:
             return float(0), float(0)
 
+
 def get_local_height(endpoint: str, validator: str) -> float:
     session = new_https()
     try:
-        resp = session.get(f"{endpoint}/api/v2/validators/{validator}/checkpoints-signed?limit=1&offset=0")
+        resp = session.get(
+            f"{endpoint}/api/v2/validators/{validator}/checkpoints-signed?limit=1&offset=0"
+        )
     except Exception as e:
         return float(0)
     else:
@@ -156,7 +166,9 @@ if __name__ == "__main__":
             if heimdall_height > 1:
                 heimdall.labels(urlparse(args.heimdall).hostname).set(heimdall_height)
             if checkpoint_height > 1:
-                checkpoint.labels(urlparse(args.heimdall).hostname).set(checkpoint_height)
+                checkpoint.labels(urlparse(args.heimdall).hostname).set(
+                    checkpoint_height
+                )
             if local_height > 1:
                 local.labels(urlparse(args.staking).hostname).set(local_height)
             time.sleep(args.freq)
